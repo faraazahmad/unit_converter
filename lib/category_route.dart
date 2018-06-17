@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'category.dart';
+import 'unit.dart';
+
+final _backgroundColor = Colors.green[100];
 
 class CategoryRoute extends StatelessWidget {
   static const _categoryNames = <String>[
@@ -24,39 +27,63 @@ class CategoryRoute extends StatelessWidget {
     Colors.red,
   ];
 
+  /// Makes the correct number of rows for the list view.
+  ///
+  /// For portrait, we use a [ListView].
+  Widget _buildCategoryWidgets(List<Category> categories) {
+    return ListView.builder(
+      itemBuilder: (BuildContext context, int index) => categories[index],
+      itemCount: categories.length,
+    );
+  }
+
+  /// Returns a list of mock [Unit]s
+  List<Unit> _retrieveUnitList(String categoryName) {
+    return List.generate(10, (int i) {
+      i += 1;
+      return Unit(
+        name: '$categoryName Unit $i',
+        conversion: i.toDouble(),
+      );
+    });
+  }
+
   const CategoryRoute();
 
   @override
   Widget build(BuildContext context) {
-    
-      var categoryChildren = <Category>[];
-      for (var i = 0; i < 8; i++) {
-        categoryChildren.add(Category(_categoryNames[i], Icons.cake,_baseColors[i]));
-      }
-
-      final appBar = AppBar(
-        centerTitle: true,
-        elevation: 0.0,
-        title: Text(
-          "Unit Converter",
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 30.0,
-          ),
-        ),
-        backgroundColor: Colors.green[100],
-      );
-
-      final listView = Container(
-        child: ListView(
-          children: categoryChildren,
-        ),
-      );
-
-      return Scaffold(
-        backgroundColor: Colors.green[100],
-        appBar: appBar,
-        body: listView,
-      );
+    final categories = <Category>[];
+    for (var i = 0; i < 8; i++) {
+      categories.add(Category(
+        name: _categoryNames[i],
+        color: _baseColors[i],
+        iconLocation: Icons.cake,
+        units: _retrieveUnitList(_categoryNames[i]),
+      ));
     }
+
+    final listView = Container(
+      color: _backgroundColor,
+      padding: EdgeInsets.symmetric(horizontal: 8.0),
+      child: _buildCategoryWidgets(categories),
+    );
+
+    final appBar = AppBar(
+      centerTitle: true,
+      elevation: 0.0,
+      title: Text(
+        "Unit Converter",
+        style: TextStyle(
+          color: Colors.black,
+          fontSize: 30.0,
+        ),
+      ),
+      backgroundColor: _backgroundColor,
+    );
+
+    return Scaffold(
+      appBar: appBar,
+      body: listView,
+    );
+  }
 }
