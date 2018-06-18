@@ -4,7 +4,14 @@ import 'unit.dart';
 
 final _backgroundColor = Colors.green[100];
 
-class CategoryRoute extends StatelessWidget {
+class CategoryRoute extends StatefulWidget {
+  const CategoryRoute();
+
+  @override
+  State<StatefulWidget> createState() => _CategoryRouteWidget();
+}
+
+class _CategoryRouteWidget extends State<CategoryRoute> {
   static const _categoryNames = <String>[
     'Length',
     'Area',
@@ -47,8 +54,6 @@ class CategoryRoute extends StatelessWidget {
       );
     });
   }
-
-  const CategoryRoute();
 
   @override
   Widget build(BuildContext context) {
