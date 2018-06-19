@@ -1,9 +1,16 @@
+// Copyright 2018 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'package:flutter/material.dart';
 
 import 'category.dart';
+import 'category_tile.dart';
 import 'unit.dart';
+import 'backdrop.dart';
+import 'unit_converter.dart';
 
-final _backgroundColor = Colors.green[100];
+final _backgroundColor = Color(0xFF6AB7A8);
 
 /// Category Route (screen).
 ///
@@ -20,6 +27,10 @@ class CategoryRoute extends StatefulWidget {
 }
 
 class _CategoryRouteState extends State<CategoryRoute> {
+  // TODO: Keep track of a default [Category], and the currently-selected
+  // [Category]
+  Category _currentCategory;
+  Category _defaultCategory;
   final _categories = <Category>[];
   static const _categoryNames = <String>[
     'Length',
@@ -70,6 +81,8 @@ class _CategoryRouteState extends State<CategoryRoute> {
   @override
   void initState() {
     super.initState();
+    
+    // Set the default [Category] for the unit converter that opens
     for (var i = 0; i < _categoryNames.length; i++) {
       _categories.add(Category(
         name: _categoryNames[i],
@@ -77,7 +90,19 @@ class _CategoryRouteState extends State<CategoryRoute> {
         iconLocation: Icons.cake,
         units: _retrieveUnitList(_categoryNames[i]),
       ));
+
+      if(i == 0) {
+        _defaultCategory = _categories[i];
+      }
     }
+  }
+
+  /// Function to call when a [Category] is tapped.
+  void _onCategoryTap(Category category) {
+    setState(() {
+      // set _current_category to tapped category
+      _currentCategory = category;
+    });
   }
 
   /// Makes the correct number of rows for the list view.
@@ -85,7 +110,12 @@ class _CategoryRouteState extends State<CategoryRoute> {
   /// For portrait, we use a [ListView].
   Widget _buildCategoryWidgets() {
     return ListView.builder(
-      itemBuilder: (BuildContext context, int index) => _categories[index],
+      itemBuilder: (BuildContext context, int index) {
+        return CategoryTile(
+          category: _categories[index],
+          onTap: _onCategoryTap,
+        );
+      },
       itemCount: _categories.length,
     );
   }
@@ -109,22 +139,16 @@ class _CategoryRouteState extends State<CategoryRoute> {
       child: _buildCategoryWidgets(),
     );
 
-    final appBar = AppBar(
-      elevation: 0.0,
-      title: Text(
-        'Unit Converter',
-        style: TextStyle(
-          color: Colors.black,
-          fontSize: 30.0,
-        ),
-      ),
-      centerTitle: true,
-      backgroundColor: _backgroundColor,
+    final backDrop = Backdrop(
+      backTitle: Text("Categories"),
+      backPanel: listView,
+      currentCategory: _currentCategory == null ? _defaultCategory : _currentCategory,
+      frontTitle: Text(""),
+      frontPanel: _currentCategory == null ?
+       UnitConverter(category: _defaultCategory) :
+       UnitConverter(category: _currentCategory,),
     );
 
-    return Scaffold(
-      appBar: appBar,
-      body: listView,
-    );
+    return backDrop;
   }
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 // @required is defined in the meta.dart package
 import 'package:meta/meta.dart';
 
-import 'converter_route.dart';
+import 'unit_converter.dart';
 import 'unit.dart';
 
 // We use an underscore to indicate that these variables are private.
@@ -53,10 +53,13 @@ class Category extends StatelessWidget {
             centerTitle: true,
             backgroundColor: color,
           ),
-          body: ConverterRoute(
-            color: color,
-            name: name,
-            units: units,
+          body: UnitConverter(
+            category: Category(
+              color: color,
+              name: name,
+              iconLocation: Icons.cake,
+              units: units,
+            ),
           ),
           // This prevents the attempt to resize the screen when the keyboard
           // is opened
